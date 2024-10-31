@@ -34,7 +34,24 @@ export const App = () => {
       email: emailRef.current?.value,
     });
 
-    console.log(response.data);
+    setCustomers((allcustomers) => [...allcustomers, response.data]);
+    nameRef.current.value = "";
+    emailRef.current.value = "";
+  };
+
+  const handleDelete = async (id: string) => {
+    try {
+      await api.delete("/customer", {
+        params: {
+          id: id,
+        },
+      });
+
+      const allcustomers = customers.filter((customer) => customer.id !== id);
+      setCustomers(allcustomers);
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   return (
@@ -84,7 +101,10 @@ export const App = () => {
                 {customer.status ? "online" : "offiline"}
               </p>
 
-              <button className="w-7 h-7 bg-red-600 flex justify-center items-center rounded-lg absolute right-0 -top-2">
+              <button
+                className="w-7 h-7 bg-red-600 flex justify-center items-center rounded-lg absolute right-0 -top-2"
+                onClick={() => handleDelete(customer.id)}
+              >
                 <FiTrash size={18} color="#fff" />
               </button>
             </article>
